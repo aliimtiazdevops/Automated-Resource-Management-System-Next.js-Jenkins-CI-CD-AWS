@@ -1,6 +1,5 @@
 node {
     def appDir = '/var/www/nextjs-dashboards'
-    def appName = 'nextjs-dashboards'
 
     stage('Clean Workspace') {
         echo 'Cleaning Jenkins Workspace'
