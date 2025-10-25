@@ -39,8 +39,8 @@ node {
             # Stop any previous PM2 process for this app (if exists)
             pm2 delete ${appName} || true
 
-            # Start the app via PM2 on public host and port 4000
-            pm2 start npm --name "${appName}" -- start -- -H 0.0.0.0 -p 4000
+            # Start the app via PM2 on public host and port 3000
+            pm2 start npm --name "${appName}" -- start -- -H 0.0.0.0 -p 3000
 
             # Save the PM2 process list so it auto-starts on reboot
             pm2 save
