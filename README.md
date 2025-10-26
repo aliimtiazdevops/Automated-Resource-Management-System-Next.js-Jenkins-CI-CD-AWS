@@ -221,8 +221,3 @@ Open [http://localhost:3000](http://localhost:3000)
 🧑‍💻 *Automated, Deployed, and Monitored by Ali Imtiaz — DevOps Engineer*
 ```
 
-
-
-**Just replace `<EC2-PUBLIC-IP>` with your actual IP** in the live link and webhook URL when using.
-
-Let me know if you want a **PDF version**, **GitHub Topics**, or **screenshots** added!
