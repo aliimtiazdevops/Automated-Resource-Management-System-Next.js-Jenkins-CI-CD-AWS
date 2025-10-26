@@ -1,34 +1,38 @@
-![Typing Animation](https://readme-typing-svg.herokuapp.com/?font=Righteous&color=9D4EDD&size=35&center=true&vCenter=true&width=600&height=70&duration=3000&lines=Automated+Resource+Management;Next.js+Dashboard;Jenkins+CI/CD+on+AWS;)
----
-### **DevOps Project | Next.js | Jenkins | GitHub Webhooks | AWS EC2**
 
-This **Automated Resource Management System** is a responsive Next.js dashboard designed for managing company resources, including employees, projects, and server monitoring.  
-It utilizes **Jenkins CI/CD** and **GitHub webhooks** for automated deployment to an **AWS EC2 instance** — ensuring every push to the `main` branch triggers seamless updates on the server.
+
+![Typing Animation](https://readme-typing-svg.herokuapp.com/?font=Righteous&color=9D4EDD&size=35&center=true&vCenter=true&width=600&height=70&duration=3000&lines=Automated+Resource+Management;Next.js+%2B+Jenkins+CI/CD;AWS+EC2+Deployment+Live!)
+---
+### **DevOps | CI/CD | Jenkins | GitHub Webhooks | AWS EC2**
+
+This **Company Resource Management Dashboard** is a **static, responsive Next.js application** with a dark neon theme, designed to showcase employee tracking, project progress, and server monitoring.  
+It features **fully automated CI/CD deployment** using **Jenkins + GitHub Webhooks** to an **AWS EC2 instance** on **port 3000** — every `main` branch push triggers instant deployment.
 
 ---
 
 ## ⚙️ Features
-- 🔄 Automated deployment via Jenkins CI/CD pipeline & GitHub webhook triggers  
-- 📊 Dashboard for employee status, project progress, and server metrics  
-- 📱 Responsive design with dark neon theme and Framer Motion transitions  
-- 👥 Employee management view with online/offline status  
-- 📈 Project tracking with progress bars and status indicators  
-- 📉 Server monitoring with charts for deployment trends and resource usage  
-- 🌐 Live deployment on AWS EC2 instance (port 3000)
+- **Automated CI/CD** via Jenkins pipeline & GitHub webhook  
+- **Live deployment** to AWS EC2 (`http://13.62.51.224:3000`)  
+- **Static data** – employees, projects, and server metrics (non-editable)  
+- **Responsive design** with Framer Motion transitions  
+- **Interactive charts** using Recharts  
+- **PM2 process manager** for production reliability  
+- **Dark neon UI** with gradient accents and glassmorphism  
+
+
 
 ---
 
 ## 🧰 Technologies Used
-- **Next.js** – React framework for server-side rendering and static generation  
-- **React** – Frontend library  
-- **Recharts** – Charting library for visualizations  
-- **Framer Motion** – Animation library for smooth transitions  
+- **Next.js 14** – React framework with SSR & API routes  
+- **React 18** – UI library  
+- **Recharts** – Interactive bar charts  
+- **Framer Motion** – Smooth page transitions  
+- **Tailwind-like CSS** – Custom styles in `globals.css`  
 - **Jenkins** – CI/CD automation  
-- **GitHub Webhooks** – Trigger pipelines on push events  
-- **AWS EC2** – Cloud hosting  
-- **PM2** – Process manager for Node.js applications  
-- **Git** – Version control  
-- **Node.js & NPM** – Runtime and package manager  
+- **GitHub Webhooks** – Trigger pipeline on push  
+- **AWS EC2** – Deployment target  
+- **PM2** – Process manager for Node.js apps  
+- **Node.js & npm** – Runtime and package management  
 
 ---
 
@@ -36,16 +40,12 @@ It utilizes **Jenkins CI/CD** and **GitHub webhooks** for automated deployment t
 ```plaintext
 ├── .gitignore
 ├── Jenkinsfile
-├── README.md
 ├── components
 │   ├── CardLink.js
 │   ├── Charts.client.js
 │   ├── EmployeeCard.js
 │   ├── Nav.js
 │   └── ProjectCard.js
-├── next.config.js
-├── package-lock.json
-├── package.json
 ├── pages
 │   ├── _app.js
 │   ├── api
@@ -56,10 +56,11 @@ It utilizes **Jenkins CI/CD** and **GitHub webhooks** for automated deployment t
 │   ├── monitor.js
 │   └── projects.js
 ├── public
-│   └── images
-│       └── logo.png
-└── styles
-    └── globals.css
+│   └── images/logo.png
+├── styles/globals.css
+├── next.config.js
+├── package.json
+└── README.md
 ```
 
 ---
@@ -67,17 +68,16 @@ It utilizes **Jenkins CI/CD** and **GitHub webhooks** for automated deployment t
 ## 🧩 Jenkinsfile (CI/CD Pipeline)
 ```groovy
 node {
-    // Define global variables once
     def appDir = '/var/www/nextjs-dashboards'
     def appName = 'nextjs-dashboard'
 
     stage('Clean Workspace') {
-        echo '🧹 Cleaning Jenkins Workspace...'
+        echo 'Cleaning Jenkins Workspace...'
         deleteDir()
     }
 
     stage('Clone Repo') {
-        echo '📦 Cloning the repository...'
+        echo 'Cloning the repository...'
         git(
             branch: 'main',
             url: 'https://github.com/aliimtiazdevops/Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS'
@@ -85,36 +85,30 @@ node {
     }
 
     stage('Deploy to EC2') {
-        echo '🚀 Deploying to EC2...'
+        echo 'Deploying to EC2...'
 
         sh """
-            # Ensure target directory exists
+            # Create directory
             sudo mkdir -p ${appDir}
             sudo chown -R jenkins:jenkins ${appDir}
 
-            # Sync project files (excluding heavy or unnecessary folders)
+            # Sync files
             rsync -av --delete --exclude='.git' --exclude='node_modules' ./ ${appDir}
 
             cd ${appDir}
 
-            # Install dependencies
+            # Install & build
             npm install
-
-            # Build Next.js app
             npm run build
 
-            # Ensure PM2 is installed
+            # Ensure PM2
             if ! command -v pm2 >/dev/null 2>&1; then
               sudo npm install -g pm2
             fi
 
-            # Stop existing app (ignore error if not found)
+            # Restart app
             pm2 delete ${appName} || true
-
-            # Start the Next.js app on port 3000
             pm2 start npm --name "${appName}" -- run start -- -H 0.0.0.0 -p 3000
-
-            # Save process list so it restarts on reboot
             pm2 save
         """
     }
@@ -124,87 +118,111 @@ node {
 ---
 
 ## 🧱 File Overview
-- **pages/index.js** → Main dashboard page with links to employees, projects, and monitoring  
-- **pages/employees.js** → Employee list view  
-- **pages/projects.js** → Project progress view  
-- **pages/monitor.js** → Server metrics and deployment charts  
-- **components/** → Reusable UI components like navigation, cards, and charts  
-- **api/** → Mock API endpoints for employees and projects  
-- **styles/globals.css** → Global styling with dark neon theme  
-- **Jenkinsfile** → CI/CD pipeline for automated deployment  
-- **public/images/** → Static assets like logos  
+- **`pages/index.js`** → Home dashboard with navigation cards  
+- **`pages/employees.js`** → Employee list with status badges  
+- **`pages/projects.js`** → Project cards with progress bars  
+- **`pages/monitor.js`** → Server stats + deployment trend chart  
+- **`components/Charts.client.js`** → Recharts bar chart (client-side)  
+- **`Jenkinsfile`** → Full CI/CD automation  
+- **`pages/api/*.js`** → Mock API endpoints (static JSON)  
 
 ---
 
-## ⚡ Setup
+## ⚡ Setup (EC2 + Jenkins)
+
+### 1. Launch EC2 Instance (Ubuntu 22.04)
 ```bash
-git clone https://github.com/aliimtiazdevops/Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS.git
-cd Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS
+# SSH into your EC2
+ssh -i "jenkenisss.pem" ubuntu@<EC2-PUBLIC-IP>
 ```
+
+### 2. Install Java, Jenkins, Node.js
+```bash
+sudo apt update
+sudo apt install openjdk-21-jdk -y
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update
+sudo apt install jenkins -y
+
+# Start Jenkins
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+node -v  # Should show v20+
+```
+
+### 3. Allow Jenkins Sudo Access
+```bash
+sudo visudo
+# Add this line:
+jenkins ALL=(ALL) NOPASSWD: ALL
+```
+
+---
+
+## 🚀 CI/CD Setup
+
+1. **Create Jenkins Job**
+   - New Item → Pipeline → Name: `resource-dashboard`
+   - Trigger: **GitHub hook trigger for GITScm polling**
+   - Pipeline → **Pipeline script from SCM**
+   - SCM: Git
+   - Repository URL: `https://github.com/aliimtiazdevops/Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS`
+   - Branch: `*/main`
+
+2. **Set Up GitHub Webhook**
+   - GitHub → Settings → Webhooks → Add webhook
+   - Payload URL: `http://<EC2-PUBLIC-IP>:8080/github-webhook/`
+   - Content type: `application/json`
+   - Events: **Just the push event**
+
+3. **Push to `main` → Auto-deploy!**
 
 ---
 
 ## 💻 Run Locally
 ```bash
+git clone https://github.com/aliimtiazdevops/Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS.git
+cd Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS
 npm install
 npm run dev
 ```
-Access at `http://localhost:3000`.
+
+Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🧩 CI/CD Setup
-1. Launch an AWS EC2 instance (e.g., Ubuntu) and connect via SSH:  
-   ```bash
-   ssh -i "your-key.pem" ubuntu@your-ec2-public-ip
-   ```  
-2. Update packages and install Java:  
-   ```bash
-   sudo apt update
-   sudo apt install openjdk-21-jdk -y
-   ```  
-3. Install Jenkins: Follow official docs or add Jenkins repo, then:  
-   ```bash
-   sudo apt install jenkins -y
-   sudo systemctl enable jenkins
-   sudo systemctl start jenkins
-   sudo systemctl status jenkins
-   ```  
-4. Grant sudo to Jenkins user (edit `/etc/sudoers`):  
-   ```bash
-   sudo visudo
-   ```  
-   Add: `jenkins ALL=(ALL) NOPASSWD: ALL`  
-5. Install Node.js and NPM:  
-   ```bash
-   sudo apt install nodejs npm -y
-   ```  
-6. In Jenkins dashboard, create a new pipeline job:  
-   - Select "GitHub hook trigger for GITScm polling".  
-   - Pipeline: "Pipeline script from SCM".  
-   - SCM: Git, repo URL: `https://github.com/aliimtiazdevops/Automated-Resource-Management-System-Next.js-Jenkins-CI-CD-AWS`, branch: `main`.  
-7. Set up GitHub webhook: In repo settings, add webhook to `http://your-ec2-ip:8080/github-webhook/` for push events.  
-8. Push to `main` → Jenkins auto-deploys to EC2 on port 3000.
+## 🌐 Live Demo
+**Deployed on AWS EC2**  
+**URL:** `http://13.62.51.224:3000` *(Replace with your EC2 public IP)*
+
+> The site is live and updates **automatically** on every push to `main`.
 
 ---
 
 ## 🧠 Usage
-- Customize dashboard pages and components as needed.  
-- Update mock API data in `/pages/api/` for real integrations.  
-- Push changes to `main` → Automatic deployment to EC2.  
-- Monitor via `http://your-ec2-public-ip:3000`.
-
----
-
-## 🔗 Live Demo
-View the deployed dashboard at: http://13.62.51.224:3000 (AWS EC2 public IP).
+- Edit data in `pages/api/*.js` or hardcode in components  
+- Customize styles in `styles/globals.css`  
+- Push to `main` → Jenkins auto-deploys in < 60 seconds  
 
 ---
 
 ## 📬 Contact
-- **Email:** aliimtiaz.dev@gmail.com  
-- **Linkedin:** https://www.linkedin.com/in/ali-imtiaz1/
+- **Email:** aliimtiaz.dev@gmail.com   
+- **LinkedIn:** linkedin.com/in/ali-imtiaz1 
 
 ---
 
-🧑‍💻 *Developed and Deployed by Ali Imtiaz, DevOps Engineer*
+🧑‍💻 *Automated, Deployed, and Monitored by Ali Imtiaz — DevOps Engineer*
+```
+
+
+
+**Just replace `<EC2-PUBLIC-IP>` with your actual IP** in the live link and webhook URL when using.
+
+Let me know if you want a **PDF version**, **GitHub Topics**, or **screenshots** added!
